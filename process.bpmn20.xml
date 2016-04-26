@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <message id="nuevaIncidencia" name="Notificación de nueva incidencia"></message>
+  <process id="process" name="Proceso ITS" isExecutable="true">
+    <userTask id="sid-5CC4B82E-77F8-47C0-9E22-1C745DD94880" name="Apertura de ticket de primer nivel" activiti:assignee="kermit">
+      <documentation>Se abre ticket en soporte de primer nivel con la información proporcionada por el usuario.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="no_ticket" name="No. Ticket" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_usuario" name="Id. Usuario" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_registrador" name="Id. Registrador" type="string"></activiti:formProperty>
+        <activiti:formProperty id="fecha_inicio" name="Fecha de inicio" type="date"></activiti:formProperty>
+        <activiti:formProperty id="fecha_resolucion" name="Fecha de resolución" type="date"></activiti:formProperty>
+        <activiti:formProperty id="nivelResolucion" name="Nivel de resolución" type="enum" required="true">
+          <activiti:value id="nivel_1" name="Nivel 1"></activiti:value>
+          <activiti:value id="nivel_2" name="Nivel 2"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="descripcion" name="Descripición" type="string"></activiti:formProperty>
+        <activiti:formProperty id="ResueltaPrimerNivel" name="¿Se resuelve la incidencia en primer nivel?" type="enum" required="true">
+          <activiti:value id="true" name="Sí"></activiti:value>
+          <activiti:value id="false" name="No"></activiti:value>
+        </activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-6B7BF5A7-75C9-4BDB-B7A1-6A96457B4FF2" name="¿Resuelta en primer nivel?"></exclusiveGateway>
+    <sequenceFlow id="sid-81F2654C-87EC-4DDE-9D81-8479115F53D9" sourceRef="sid-5CC4B82E-77F8-47C0-9E22-1C745DD94880" targetRef="sid-6B7BF5A7-75C9-4BDB-B7A1-6A96457B4FF2"></sequenceFlow>
+    <serviceTask id="sid-95543A59-B867-4007-AD01-81E32E1819FE" name="Envío de email informando de solución del problema" activiti:type="mail">
+      <documentation>Se envía un email al usuario informando de la resolución de su ticket.</documentation>
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:string><![CDATA[miguel.exposito.uned@gmail.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="from">
+          <activiti:string><![CDATA[miguel.exposito.uned@gmail.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:expression><![CDATA[ticket ${no_ticket} cerrado resuelto]]></activiti:expression>
+        </activiti:field>
+        <activiti:field name="text">
+          <activiti:expression><![CDATA[Su ticket con identificador ${no_ticket} ha sido resuelto con éxito.]]></activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <startEvent id="sid-C34E7C3C-19CD-492F-AFE1-28302B6BB6DD">
+      <messageEventDefinition messageRef="nuevaIncidencia"></messageEventDefinition>
+    </startEvent>
+    <sequenceFlow id="sid-5F531ABB-5B2A-4442-940A-5257792586A4" sourceRef="sid-95543A59-B867-4007-AD01-81E32E1819FE" targetRef="sid-BECB7C89-B882-44AF-920A-8D15E0DD364F"></sequenceFlow>
+    <endEvent id="sid-0F5DCCE6-CF57-4A8B-819B-69C6714AC01F"></endEvent>
+    <userTask id="sid-665115EF-5933-4BD1-892F-3924E983178D" name="Apertura de ticket de segundo nivel" activiti:assignee="kermit">
+      <documentation>Se abre ticket en soporte de segundo nivel con la información proporcionada por el soporte de primer nivel.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="no_ticket" name="No. Ticket" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_usuario" name="Id. Usuario" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_registrador" name="Id. Registrador" type="string"></activiti:formProperty>
+        <activiti:formProperty id="fecha_inicio" name="Fecha de inicio" type="date"></activiti:formProperty>
+        <activiti:formProperty id="fecha_resolucion" name="Fecha de resolución" type="date"></activiti:formProperty>
+        <activiti:formProperty id="nivelResolucion" name="Nivel de resolución" type="enum" required="true">
+          <activiti:value id="nivel_1" name="Nivel 1"></activiti:value>
+          <activiti:value id="nivel_2" name="Nivel 2"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="descripcion" name="Descripición" type="string"></activiti:formProperty>
+        <activiti:formProperty id="ResueltaSegundoNivel" name="¿Se resuelve la incidencia en segundo nivel?" type="enum" required="true">
+          <activiti:value id="true" name="Sí"></activiti:value>
+          <activiti:value id="false" name="No"></activiti:value>
+        </activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-07FDE1BA-7AD1-4D6C-A8F7-261EDEE54CF9" name="¿Resuelta en segundo nivel?"></exclusiveGateway>
+    <sequenceFlow id="sid-7477B730-DEC6-40C0-B2DE-7D86C4CEC0DA" sourceRef="sid-665115EF-5933-4BD1-892F-3924E983178D" targetRef="sid-07FDE1BA-7AD1-4D6C-A8F7-261EDEE54CF9"></sequenceFlow>
+    <userTask id="sid-563A103A-0E9B-4AEC-9C25-56E5CFE3D7DB" name="Justificación de no solución" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:formProperty id="no_ticket" name="No. Ticket" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_usuario" name="Id. Usuario" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_registrador" name="Id. Registrador" type="string"></activiti:formProperty>
+        <activiti:formProperty id="fecha_resolucion" name="Fecha de resolución" type="date"></activiti:formProperty>
+        <activiti:formProperty id="causa_no_resolucion" name="Causa de no resolución" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <serviceTask id="sid-D44AFD10-5035-42C5-B405-465B55E69BCC" name="Envío de email informando de situación" activiti:type="mail">
+      <documentation>Se envía un email al usuario informando del motivo de no resolución de su ticket.</documentation>
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:string><![CDATA[miguel.exposito.uned@gmail.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="from">
+          <activiti:string><![CDATA[miguel.exposito.uned@gmail.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:expression><![CDATA[ticket ${no_ticket} cerrado no resuelto]]></activiti:expression>
+        </activiti:field>
+        <activiti:field name="text">
+          <activiti:expression><![CDATA[El ticket con identificador ${no_ticket} no ha podido ser resuelto por el siguiente motivo: ${causa_no_resolucion}]]></activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <userTask id="sid-BECB7C89-B882-44AF-920A-8D15E0DD364F" name="Actualización de información en el sistema" activiti:assignee="kermit">
+      <documentation>Se actualiza la base de datos de conocimiento del centro de soporte.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="no_ticket" name="No. Ticket" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_usuario" name="Id. Usuario" type="string"></activiti:formProperty>
+        <activiti:formProperty id="id_registrador" name="Id. Registrador" type="string"></activiti:formProperty>
+        <activiti:formProperty id="fecha_resolucion" name="Fecha de resolución" type="date"></activiti:formProperty>
+        <activiti:formProperty id="datos_resolucion" name="Datos sobre la resolución" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-967A194D-290E-4EAA-8CB8-07E68BD741C2" sourceRef="sid-BECB7C89-B882-44AF-920A-8D15E0DD364F" targetRef="sid-0F5DCCE6-CF57-4A8B-819B-69C6714AC01F"></sequenceFlow>
+    <sequenceFlow id="sid-9846C155-19F9-41D7-A96B-BC6D80D607E8" sourceRef="sid-563A103A-0E9B-4AEC-9C25-56E5CFE3D7DB" targetRef="sid-D44AFD10-5035-42C5-B405-465B55E69BCC"></sequenceFlow>
+    <sequenceFlow id="sid-C84C68BD-F8AC-4122-9437-006491DC4D4B" sourceRef="sid-C34E7C3C-19CD-492F-AFE1-28302B6BB6DD" targetRef="sid-5CC4B82E-77F8-47C0-9E22-1C745DD94880"></sequenceFlow>
+    <sequenceFlow id="sid-1F7F847C-4885-4B1F-86F9-E7625A3E8396" name="No" sourceRef="sid-6B7BF5A7-75C9-4BDB-B7A1-6A96457B4FF2" targetRef="sid-665115EF-5933-4BD1-892F-3924E983178D">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ResueltaPrimerNivel == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-DFD5A8F7-00B8-4F7F-AD97-241869B46A51" name="Sí" sourceRef="sid-6B7BF5A7-75C9-4BDB-B7A1-6A96457B4FF2" targetRef="sid-95543A59-B867-4007-AD01-81E32E1819FE">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ResueltaPrimerNivel == 'true'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-1F1580ED-EBD3-4AA3-B978-7C778FE73D8A" name="No" sourceRef="sid-07FDE1BA-7AD1-4D6C-A8F7-261EDEE54CF9" targetRef="sid-563A103A-0E9B-4AEC-9C25-56E5CFE3D7DB">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ResueltaSegundoNivel == 'false'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-722F56CF-A8D1-460E-9C9F-AD7380ADD2E1" name="Sí" sourceRef="sid-07FDE1BA-7AD1-4D6C-A8F7-261EDEE54CF9" targetRef="sid-95543A59-B867-4007-AD01-81E32E1819FE">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ResueltaSegundoNivel == 'true'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-353E5E73-89DA-432B-9805-C460918E09DF" sourceRef="sid-D44AFD10-5035-42C5-B405-465B55E69BCC" targetRef="sid-0F5DCCE6-CF57-4A8B-819B-69C6714AC01F"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane bpmnElement="process" id="BPMNPlane_process">
+      <bpmndi:BPMNShape bpmnElement="sid-5CC4B82E-77F8-47C0-9E22-1C745DD94880" id="BPMNShape_sid-5CC4B82E-77F8-47C0-9E22-1C745DD94880">
+        <omgdc:Bounds height="80.0" width="100.0" x="210.0" y="135.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-6B7BF5A7-75C9-4BDB-B7A1-6A96457B4FF2" id="BPMNShape_sid-6B7BF5A7-75C9-4BDB-B7A1-6A96457B4FF2">
+        <omgdc:Bounds height="40.0" width="40.0" x="412.5" y="155.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-95543A59-B867-4007-AD01-81E32E1819FE" id="BPMNShape_sid-95543A59-B867-4007-AD01-81E32E1819FE">
+        <omgdc:Bounds height="80.0" width="100.0" x="382.5" y="288.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-C34E7C3C-19CD-492F-AFE1-28302B6BB6DD" id="BPMNShape_sid-C34E7C3C-19CD-492F-AFE1-28302B6BB6DD">
+        <omgdc:Bounds height="30.0" width="30.5" x="30.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-0F5DCCE6-CF57-4A8B-819B-69C6714AC01F" id="BPMNShape_sid-0F5DCCE6-CF57-4A8B-819B-69C6714AC01F">
+        <omgdc:Bounds height="28.0" width="28.0" x="418.5" y="588.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-665115EF-5933-4BD1-892F-3924E983178D" id="BPMNShape_sid-665115EF-5933-4BD1-892F-3924E983178D">
+        <omgdc:Bounds height="80.0" width="100.0" x="675.0" y="135.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-07FDE1BA-7AD1-4D6C-A8F7-261EDEE54CF9" id="BPMNShape_sid-07FDE1BA-7AD1-4D6C-A8F7-261EDEE54CF9">
+        <omgdc:Bounds height="40.0" width="40.0" x="705.0" y="308.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-563A103A-0E9B-4AEC-9C25-56E5CFE3D7DB" id="BPMNShape_sid-563A103A-0E9B-4AEC-9C25-56E5CFE3D7DB">
+        <omgdc:Bounds height="80.0" width="100.0" x="960.0" y="288.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D44AFD10-5035-42C5-B405-465B55E69BCC" id="BPMNShape_sid-D44AFD10-5035-42C5-B405-465B55E69BCC">
+        <omgdc:Bounds height="80.0" width="100.0" x="795.0" y="562.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-BECB7C89-B882-44AF-920A-8D15E0DD364F" id="BPMNShape_sid-BECB7C89-B882-44AF-920A-8D15E0DD364F">
+        <omgdc:Bounds height="80.0" width="100.0" x="382.5" y="438.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-DFD5A8F7-00B8-4F7F-AD97-241869B46A51" id="BPMNEdge_sid-DFD5A8F7-00B8-4F7F-AD97-241869B46A51">
+        <omgdi:waypoint x="432.5" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="432.5" y="288.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-967A194D-290E-4EAA-8CB8-07E68BD741C2" id="BPMNEdge_sid-967A194D-290E-4EAA-8CB8-07E68BD741C2">
+        <omgdi:waypoint x="432.5" y="518.0"></omgdi:waypoint>
+        <omgdi:waypoint x="432.5" y="588.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7477B730-DEC6-40C0-B2DE-7D86C4CEC0DA" id="BPMNEdge_sid-7477B730-DEC6-40C0-B2DE-7D86C4CEC0DA">
+        <omgdi:waypoint x="725.0" y="215.0"></omgdi:waypoint>
+        <omgdi:waypoint x="725.0" y="308.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-81F2654C-87EC-4DDE-9D81-8479115F53D9" id="BPMNEdge_sid-81F2654C-87EC-4DDE-9D81-8479115F53D9">
+        <omgdi:waypoint x="310.0" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="412.5" y="175.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C84C68BD-F8AC-4122-9437-006491DC4D4B" id="BPMNEdge_sid-C84C68BD-F8AC-4122-9437-006491DC4D4B">
+        <omgdi:waypoint x="60.5" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="175.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-353E5E73-89DA-432B-9805-C460918E09DF" id="BPMNEdge_sid-353E5E73-89DA-432B-9805-C460918E09DF">
+        <omgdi:waypoint x="795.0" y="602.0"></omgdi:waypoint>
+        <omgdi:waypoint x="446.5" y="602.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1F1580ED-EBD3-4AA3-B978-7C778FE73D8A" id="BPMNEdge_sid-1F1580ED-EBD3-4AA3-B978-7C778FE73D8A">
+        <omgdi:waypoint x="745.0" y="328.0"></omgdi:waypoint>
+        <omgdi:waypoint x="960.0" y="328.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1F7F847C-4885-4B1F-86F9-E7625A3E8396" id="BPMNEdge_sid-1F7F847C-4885-4B1F-86F9-E7625A3E8396">
+        <omgdi:waypoint x="452.5" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="675.0" y="175.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-722F56CF-A8D1-460E-9C9F-AD7380ADD2E1" id="BPMNEdge_sid-722F56CF-A8D1-460E-9C9F-AD7380ADD2E1">
+        <omgdi:waypoint x="705.0" y="328.0"></omgdi:waypoint>
+        <omgdi:waypoint x="482.5" y="328.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9846C155-19F9-41D7-A96B-BC6D80D607E8" id="BPMNEdge_sid-9846C155-19F9-41D7-A96B-BC6D80D607E8">
+        <omgdi:waypoint x="1010.0" y="368.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1010.0" y="602.0"></omgdi:waypoint>
+        <omgdi:waypoint x="895.0" y="602.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-5F531ABB-5B2A-4442-940A-5257792586A4" id="BPMNEdge_sid-5F531ABB-5B2A-4442-940A-5257792586A4">
+        <omgdi:waypoint x="432.5" y="368.0"></omgdi:waypoint>
+        <omgdi:waypoint x="432.5" y="438.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
